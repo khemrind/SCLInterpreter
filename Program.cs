@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Interpreter
 {
@@ -20,12 +21,18 @@ namespace Interpreter
                 stopwatch.Start();
 
                 var document = new Document(source: text);
-
                 Scanner.Process(document);
 
-                document.PrintToConsole();
-
                 stopwatch.Stop();
+
+                document.PrintToConsole();
+                
+                document.PrintWords();
+
+                //var data = JsonConvert.SerializeObject(document.Words, Formatting.Indented);
+                //Console.WriteLine(data);
+
+                
             }
 
             // end program
@@ -48,7 +55,7 @@ namespace Interpreter
                     string path = Console.ReadLine();
 
                     // TESTING
-                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\welcome.scl";
+                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\arrayex1b.scl";
 
                     // read text
                     text = File.ReadAllText(path);

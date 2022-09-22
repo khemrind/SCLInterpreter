@@ -15,25 +15,46 @@ namespace Interpreter
         {
             Document = document;
 
-            // literals
-            Register("\".*\"", 0, Part.Literal);
-
             // comments
             Register(@"\/\/.*\n", 0, Part.Comment);
+
+            // literals
+            Register("\".*?\"|\\<.*\\>", 0, Part.Literal);
 
             // description
             Register(@"description([\S\s]*?\*\/)", 1, Part.Comment);
 
             // types
-            Register(@"type ((unsigned )?\w+)", 1, Part.Type);
+            Register(@"\btype ((unsigned )?\w+)", 1, Part.Type);
+            Register(@"definetype \w+ \w+ (\w+)", 1, Part.Type);
+
+            // constants
+            Register(@"symbol (\w+)", 1, Part.Constant);
 
             // keywords
-            Register(Constant.GetOrPattern(Constant.Keywords), 0, Part.Keyword);
+            Register(Constant.GetOrPattern(Constant.Keywords, isolated: true), 0, Part.Keyword);
 
-            // keywords
-            Register(Constant.GetOrPattern(Constant.Controllers), 0, Part.Controller);
+            // controllers
+            Register(Constant.GetOrPattern(Constant.Conditionals, isolated: true), 0, Part.Conditional);
 
-            
+            // identifiers
+            Register(@"define +(\w+)", 1, Part.Identifier);
+            Register(@"set +(\w+)", 1, Part.Identifier);
+            Register(@"(\w+) of type ", 1, Part.Identifier);
+            Register(@"(\w+) array *\[\] of type ", 1, Part.Identifier);
+
+            // methods
+            Register(@"function +(\w+)", 1, Part.Method);
+            Register(@"endfun +(\w+)", 1, Part.Method);
+            Register(@"call (\w+)\b", 1, Part.Method);
+            Register(@"call +\w+\.(\w+)", 1, Part.Method);
+            Register(@"(\w+)\(.*\)", 1, Part.Method);
+
+            // operators
+            Register(Constant.GetOrPattern(Constant.Operators), 0, Part.Operator);
+
+            // binary operators
+            Register(Constant.GetOrPattern(Constant.BinaryOperators, isolated: true), 0, Part.BinaryOperator);
         }
 
         private static void Register(string pattern, int group, Part part)
@@ -52,24 +73,29 @@ namespace Interpreter
                     Part = part
                 };
 
+                if (Document.Colors[word.Start] == null) Document.Words.Add(word);
+
                 // fill table with color
                 for (int index = word.Start; index < word.End; index++)
                     if (Document.Colors[index] == null) Document.Colors[index] = color;
 
-                Document.Words.Add(word);
+                
             }
         }
 
-        private static ConsoleColor GetColorFrom(Part part)
+        public static ConsoleColor GetColorFrom(Part part)
         {
             return part switch
             {
-                Part.Type => ConsoleColor.Cyan,
-                Part.Constant => ConsoleColor.Gray,
+                Part.Type => ConsoleColor.Blue,
+                Part.Constant => ConsoleColor.DarkCyan,
                 Part.Literal => ConsoleColor.DarkYellow,
-                Part.Operator => ConsoleColor.White,
-                Part.Controller => ConsoleColor.Magenta,
-                Part.Keyword => ConsoleColor.Blue,
+                Part.Identifier => ConsoleColor.White,
+                Part.Method => ConsoleColor.Yellow,
+                Part.BinaryOperator => ConsoleColor.DarkMagenta,
+                Part.Operator => ConsoleColor.Gray,
+                Part.Conditional => ConsoleColor.Magenta,
+                Part.Keyword => ConsoleColor.Cyan,
                 Part.Comment => ConsoleColor.DarkGray,
                 Part.Inert => ConsoleColor.White,
                 _ => ConsoleColor.White,
@@ -89,8 +115,11 @@ namespace Interpreter
         Type,
         Constant,
         Literal,
+        Identifier,
+        Method,
+        BinaryOperator,
         Operator,
-        Controller,
+        Conditional,
         Keyword,
         Comment,
         Inert

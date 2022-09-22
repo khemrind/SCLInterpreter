@@ -13,31 +13,37 @@ namespace Interpreter
             "import", "symbol", "forward", 
             "specifications", "references", 
             "function", "declarations", 
-            "variables", "global",
-            "implementations", "main", 
-            "parameters", "constant", 
-            "begin", "endfun", 
+            "variables", "global", "input",
+            "implementations", "main", "definetype",
+            "parameters", "constants", 
+            "begin", "endfun", "create", "destroy",
             "display", "set", "return", 
-            "define", "of", "type", 
-            "array", "struct", "pointer",
-            "enum", "call", "exit", "increment",
-            "is"
+            "define", "of", "type", "pointer",
+            "array", "structures","endstruct", "struct", "pointer",
+            "enumerate","endenum", "enum", "call", "exit", "increment",
+            "is", "using", "description"
         };
 
-        public static readonly string[] Controllers =
+        public static readonly string[] Conditionals =
         {
             "repeat", "until", "endrepeat",
             "if", "then", "else", "endif",
-            "while", "endwhile"
+            "while", "endwhile","endfor", "for", "to", "do"
         };
 
         public static readonly string[] Operators =
         {
-            "+", "-", "=",
-            "+=", "-=", "++", "--",
-            ":", "*", "/", "%", "==", 
-            "!=", ">", "<", 
-            ">=", "<=", "and", "or"
+            "\\+", "-", "=",
+            "\\+=", "-=", "\\+\\+", "--",
+            ":", "\\*", "\\/", "%", "==", 
+            "!=", ">", "<", "\\^",
+            ">=", "<=", "\\band\\b", "\\bor\\b"
+        };
+
+        public static readonly string[] BinaryOperators =
+        {
+            "band", "bor", "bxand", "bxor", 
+            "lshift", "rshift", "negate"
         };
 
         // get keywords
@@ -45,11 +51,15 @@ namespace Interpreter
         // operators
         // constants
 
-        public static string GetOrPattern(string[] tokens)
+        public static string GetOrPattern(string[] tokens, bool isolated = false)
         {
             string pattern = "";
             for (int index = 0; index < tokens.Length - 1; index++)
-                pattern += tokens[index] + "|";
+            {
+                if (isolated) pattern += "\\b" + tokens[index] + "\\b" + "|";
+                else pattern += tokens[index] + "|";
+            }
+                
             return pattern + tokens.Last();
         }
 
