@@ -32,6 +32,10 @@ namespace Interpreter
                 //var data = JsonConvert.SerializeObject(document.Words, Formatting.Indented);
                 //Console.WriteLine(data);
 
+                for (int index = 0; index < document.Source.Length; index++)
+                {
+                    Console.Write(document.Colors[index] == null ? document.Source[index] : " ");
+                }
                 
             }
 
@@ -55,7 +59,7 @@ namespace Interpreter
                     string path = Console.ReadLine();
 
                     // TESTING
-                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\arrayex1b.scl";
+                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\linkedg.scl";
 
                     // read text
                     text = File.ReadAllText(path);

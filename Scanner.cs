@@ -31,6 +31,9 @@ namespace Interpreter
             // constants
             Register(@"symbol (\w+)", 1, Part.Constant);
 
+            // numeric
+            Register(@"\b[0-9]+[\.]?[0-9]*\b", 0, Part.Numeric);
+
             // keywords
             Register(Constant.GetOrPattern(Constant.Keywords, isolated: true), 0, Part.Keyword);
 
@@ -42,6 +45,8 @@ namespace Interpreter
             Register(@"set +(\w+)", 1, Part.Identifier);
             Register(@"(\w+) of type ", 1, Part.Identifier);
             Register(@"(\w+) array *\[\] of type ", 1, Part.Identifier);
+            Register(@", +(\w+)", 1, Part.Identifier);
+            Register(@"using (\w+)", 1, Part.Identifier);
 
             // methods
             Register(@"function +(\w+)", 1, Part.Method);
@@ -55,6 +60,12 @@ namespace Interpreter
 
             // binary operators
             Register(Constant.GetOrPattern(Constant.BinaryOperators, isolated: true), 0, Part.BinaryOperator);
+
+            // inert
+            Register(@"\.|\(|\)|,|\[|\]", 0, Part.Inert);
+
+            // identifiers 2
+            Register(@"\w+", 0, Part.Identifier);
         }
 
         private static void Register(string pattern, int group, Part part)
@@ -89,6 +100,7 @@ namespace Interpreter
             {
                 Part.Type => ConsoleColor.Blue,
                 Part.Constant => ConsoleColor.DarkCyan,
+                Part.Numeric => ConsoleColor.Red,
                 Part.Literal => ConsoleColor.DarkYellow,
                 Part.Identifier => ConsoleColor.White,
                 Part.Method => ConsoleColor.Yellow,
@@ -114,6 +126,7 @@ namespace Interpreter
     {
         Type,
         Constant,
+        Numeric,
         Literal,
         Identifier,
         Method,
