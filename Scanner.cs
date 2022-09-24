@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Interpreter
 {
@@ -16,23 +12,23 @@ namespace Interpreter
             Document = document;
 
             // comments
-            Register(@"\/\/.*\n", 0, Part.Comment);
+            Register(@"\/\/.*\n", 0, Part.Comment); // just like this!
 
             // literals
-            Register("\".*?\"|\\<.*\\>", 0, Part.Literal);
+            Register("\".*?\"|\\<.*\\>", 0, Part.Literal); // quotes and c++ imports
 
             // description
-            Register(@"description([\S\s]*?\*\/)", 1, Part.Comment);
+            Register(@"description([\S\s]*?\*\/)", 1, Part.Comment); // description paragraph
 
             // types
-            Register(@"\btype ((unsigned )?\w+)", 1, Part.Type);
-            Register(@"definetype \w+ \w+ (\w+)", 1, Part.Type);
+            Register(@"\btype ((unsigned )?\w+)", 1, Part.Type); // explicit type declaration
+            Register(@"definetype \w+ \w+ (\w+)", 1, Part.Type); // with definetype
 
             // constants
-            Register(@"symbol (\w+)", 1, Part.Constant);
+            Register(@"symbol (\w+)", 1, Part.Constant); // with symbol
 
             // numeric
-            Register(@"\b[0-9]+[\.]?[0-9]*\b", 0, Part.Numeric);
+            Register(@"\b[0-9]+[\.]?[0-9]*\b", 0, Part.Numeric); // number, optional float, isolated
 
             // keywords
             Register(Constant.GetOrPattern(Constant.Keywords, isolated: true), 0, Part.Keyword);
@@ -40,7 +36,7 @@ namespace Interpreter
             // controllers
             Register(Constant.GetOrPattern(Constant.Conditionals, isolated: true), 0, Part.Conditional);
 
-            // identifiers
+            // identifiers: specific implications
             Register(@"define +(\w+)", 1, Part.Identifier);
             Register(@"set +(\w+)", 1, Part.Identifier);
             Register(@"(\w+) of type ", 1, Part.Identifier);
@@ -49,11 +45,11 @@ namespace Interpreter
             Register(@"using (\w+)", 1, Part.Identifier);
 
             // methods
-            Register(@"function +(\w+)", 1, Part.Method);
-            Register(@"endfun +(\w+)", 1, Part.Method);
-            Register(@"call (\w+)\b", 1, Part.Method);
-            Register(@"call +\w+\.(\w+)", 1, Part.Method);
-            Register(@"(\w+)\(.*\)", 1, Part.Method);
+            Register(@"function +(\w+)", 1, Part.Method); // 
+            Register(@"endfun +(\w+)", 1, Part.Method); // 
+            Register(@"call (\w+)\b", 1, Part.Method); // 
+            Register(@"call +\w+\.(\w+)", 1, Part.Method); // 
+            Register(@"(\w+)\(.*\)", 1, Part.Method); // 
 
             // operators
             Register(Constant.GetOrPattern(Constant.Operators), 0, Part.Operator);
@@ -62,18 +58,24 @@ namespace Interpreter
             Register(Constant.GetOrPattern(Constant.BinaryOperators, isolated: true), 0, Part.BinaryOperator);
 
             // inert
-            Register(@"\.|\(|\)|,|\[|\]", 0, Part.Inert);
+            Register(@"\.|\(|\)|,|\[|\]", 0, Part.Inert); // all structural elements
 
-            // identifiers 2
-            Register(@"\w+", 0, Part.Identifier);
+            // identifiers: the rest
+            Register(@"\w+", 0, Part.Identifier); // any other word
         }
 
         private static void Register(string pattern, int group, Part part)
         {
+            // get specified color
             var color = GetColorFrom(part);
+
+            // perform search
             var matches = Regex.Matches(Document.Source, pattern);
+
+            // process each word
             foreach (Match match in matches)
             {
+                // specified target
                 var target = match.Groups[group];
 
                 // create word
@@ -84,18 +86,19 @@ namespace Interpreter
                     Part = part
                 };
 
-                if (Document.Colors[word.Start] == null) Document.Words.Add(word);
+                // add the word if there is space
+                if (Document.Colors[word.Start] == null) 
+                    Document.Words.Add(word);
 
                 // fill table with color
                 for (int index = word.Start; index < word.End; index++)
                     if (Document.Colors[index] == null) Document.Colors[index] = color;
-
-                
             }
         }
 
         public static ConsoleColor GetColorFrom(Part part)
         {
+            // assign each part a color
             return part switch
             {
                 Part.Type => ConsoleColor.Blue,

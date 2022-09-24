@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Interpreter
 {
@@ -7,6 +6,7 @@ namespace Interpreter
     {
         public static void Main(string[] args)
         {
+            // create timer
             Stopwatch stopwatch = new();
 
             // start message
@@ -18,25 +18,17 @@ namespace Interpreter
 
             else
             {
-                stopwatch.Start();
-
+                // initialize document with text
                 var document = new Document(source: text);
-                Scanner.Process(document);
 
+                // start process and record time
+                stopwatch.Start(); 
+                Scanner.Process(document);
                 stopwatch.Stop();
 
+                // print highlighted text and word content
                 document.PrintToConsole();
-                
                 document.PrintWords();
-
-                //var data = JsonConvert.SerializeObject(document.Words, Formatting.Indented);
-                //Console.WriteLine(data);
-
-                for (int index = 0; index < document.Source.Length; index++)
-                {
-                    Console.Write(document.Colors[index] == null ? document.Source[index] : " ");
-                }
-                
             }
 
             // end program
@@ -49,7 +41,9 @@ namespace Interpreter
         {
             text = string.Empty;
 
+            #region Testing
             // default, testing
+            // pressing enter with no path assumes a hardcoded testing path
             if (args.Length == 0) 
             {
                 try
@@ -58,7 +52,7 @@ namespace Interpreter
                     Console.Write("Enter source file path (.scl): ");
                     string path = Console.ReadLine();
 
-                    // TESTING
+                    // test path
                     if (path == "") path = "C:\\projects\\Interpreter\\assets\\linkedg.scl";
 
                     // read text
@@ -73,17 +67,20 @@ namespace Interpreter
                     return false;
                 }
             }
+            #endregion
 
             // user defined
             else if (args.Length == 1) 
             {
                 try
                 {
+                    // read string from file
                     text = File.ReadAllText(args[0]);
                     Console.WriteLine();
                     return true;
                 }
 
+                // report error
                 catch (Exception error) 
                 {
                     Console.WriteLine(error.Message);

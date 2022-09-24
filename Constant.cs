@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interpreter
 {
@@ -46,13 +42,9 @@ namespace Interpreter
             "lshift", "rshift", "negate"
         };
 
-        // get keywords
-        // identifiers
-        // operators
-        // constants
-
         public static string GetOrPattern(string[] tokens, bool isolated = false)
         {
+            // join each string with the RegEx or operator
             string pattern = "";
             for (int index = 0; index < tokens.Length - 1; index++)
             {
