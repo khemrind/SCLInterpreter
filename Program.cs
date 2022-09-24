@@ -10,7 +10,7 @@ namespace Interpreter
             Stopwatch stopwatch = new();
 
             // start message
-            Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung. \nVisit https://www.github.com/khemrind for source.\n");
+            Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung, 2022. \nVisit https://github.com/khemrind/SCLInterpreter for source.\n");
 
             // read file
             if (TryGetSource(out string text, args) == false)
