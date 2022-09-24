@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Interpreter
 {
     public class Document
     {
+        // source name
+        public string Name { get; set; }
+
         // source text
         public string Source { get; set; }
 
@@ -12,6 +16,9 @@ namespace Interpreter
 
         // word list
         public List<Word> Words { get; set; } = new();
+
+        // word record for output
+        public List<List<object>> WordData = new();
 
         public Document(string source)
         {
@@ -48,14 +55,38 @@ namespace Interpreter
         public void PrintWords()
         {
             // print each category of word: part
-            var parts = Enum.GetValues(typeof(Part)).Cast<Part>();
+            var parts = Enum.GetValues(typeof(Part)).Cast<Part>().ToArray();
             foreach (var part in parts)
-                PrintWordGroup(part);
+            {
+                // add record to word data
+                WordData.Add(PrintWordGroup(part));
+            }
+
+            // output data to separate json files
+            int index = 0;
+            foreach (var record in WordData)
+            {
+                // create file name
+                var filename = $"{Name}_{parts[index].ToString().ToLower()}.json";
+
+                // skip empty records
+                if (record.Count >= 1)
+                {
+                    // serialize and write to file
+                    var serialized = JsonConvert.SerializeObject(record, Formatting.Indented);
+                    File.WriteAllText(filename, serialized);
+                }
+
+                index++;
+            }
         }
 
-        private void PrintWordGroup(Part part)
+        private List<object> PrintWordGroup(Part part)
         {
             PrintHeader(part.ToString());
+
+            // create a new record
+            var record = new List<object>();
 
             // retrieve words of a specific category
             var group = Words.Where(item => item.Part == part);
@@ -66,6 +97,17 @@ namespace Interpreter
             {
                 var value = Source[word.Start..word.End];
 
+                // create an entry
+                var entry = new
+                {
+                    value,
+                    start = word.Start,
+                    end = word.End,
+                };
+
+                // add entry to record
+                record.Add(entry);
+
                 // print json style
                 WriteWith($"    {value.Trim()} ", Scanner.GetColorFrom(part));
                 WriteWith($"[", ConsoleColor.Red);
@@ -75,10 +117,13 @@ namespace Interpreter
                 WriteWith($"]", ConsoleColor.Red);
                 Console.WriteLine(",");
             }
+
             Console.WriteLine("]\n");
+
+            return record;
         }
 
-        private static void WriteWith(object text, ConsoleColor color)
+        public static void WriteWith(object text, ConsoleColor color)
         { 
             // write to console with specified color
             Console.ForegroundColor = color;

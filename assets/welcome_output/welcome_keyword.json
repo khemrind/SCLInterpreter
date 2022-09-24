@@ -1,0 +1,97 @@
+[
+  {
+    "value": "description",
+    "start": 0,
+    "end": 11
+  },
+  {
+    "value": "import",
+    "start": 176,
+    "end": 182
+  },
+  {
+    "value": "implementations",
+    "start": 191,
+    "end": 206
+  },
+  {
+    "value": "function",
+    "start": 207,
+    "end": 215
+  },
+  {
+    "value": "main",
+    "start": 216,
+    "end": 220
+  },
+  {
+    "value": "return",
+    "start": 221,
+    "end": 227
+  },
+  {
+    "value": "type",
+    "start": 228,
+    "end": 232
+  },
+  {
+    "value": "is",
+    "start": 241,
+    "end": 243
+  },
+  {
+    "value": "variables",
+    "start": 244,
+    "end": 253
+  },
+  {
+    "value": "define",
+    "start": 258,
+    "end": 264
+  },
+  {
+    "value": "of",
+    "start": 267,
+    "end": 269
+  },
+  {
+    "value": "type",
+    "start": 270,
+    "end": 274
+  },
+  {
+    "value": "begin",
+    "start": 310,
+    "end": 315
+  },
+  {
+    "value": "display",
+    "start": 320,
+    "end": 327
+  },
+  {
+    "value": "set",
+    "start": 362,
+    "end": 365
+  },
+  {
+    "value": "display",
+    "start": 414,
+    "end": 421
+  },
+  {
+    "value": "exit",
+    "start": 444,
+    "end": 448
+  },
+  {
+    "value": "endfun",
+    "start": 497,
+    "end": 503
+  },
+  {
+    "value": "main",
+    "start": 504,
+    "end": 508
+  }
+]

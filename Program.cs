@@ -13,13 +13,14 @@ namespace Interpreter
             Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung, 2022. \nVisit https://github.com/khemrind/SCLInterpreter for source.\n");
 
             // read file
-            if (TryGetSource(out string text, args) == false)
+            if (TryGetSource(out string text, out string filename, args) == false)
                 Console.WriteLine("Program encountered an error."); 
 
             else
             {
                 // initialize document with text
                 var document = new Document(source: text);
+                document.Name = Path.GetFileNameWithoutExtension(filename);
 
                 // start process and record time
                 stopwatch.Start(); 
@@ -33,15 +34,15 @@ namespace Interpreter
 
             // end program
             Console.WriteLine($"\nProcess time: {stopwatch.ElapsedMilliseconds}ms");
-            Console.WriteLine("Press any key to exit...", ConsoleColor.Red);
+            Document.WriteWith("Press any key to exit...\n", ConsoleColor.Red);
             Console.ReadKey();
         }
 
-        public static bool TryGetSource(out string text, string[] args)
+        public static bool TryGetSource(out string text, out string filename, string[] args)
         {
             text = string.Empty;
+            filename = string.Empty;
 
-            #region Testing
             // default, testing
             // pressing enter with no path assumes a hardcoded testing path
             if (args.Length == 0) 
@@ -54,6 +55,7 @@ namespace Interpreter
 
                     // test path
                     if (path == "") path = "C:\\projects\\Interpreter\\assets\\linkedg.scl";
+                    filename = path;
 
                     // read text
                     text = File.ReadAllText(path);
@@ -67,7 +69,6 @@ namespace Interpreter
                     return false;
                 }
             }
-            #endregion
 
             // user defined
             else if (args.Length == 1) 
@@ -76,6 +77,7 @@ namespace Interpreter
                 {
                     // read string from file
                     text = File.ReadAllText(args[0]);
+                    filename = args[0];
                     Console.WriteLine();
                     return true;
                 }
