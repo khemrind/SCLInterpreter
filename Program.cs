@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Interpreter
 {
@@ -30,6 +31,18 @@ namespace Interpreter
                 // print highlighted text and word content
                 document.PrintToConsole();
                 document.PrintWords();
+
+                //foreach (var word in document.Words)
+                //{
+                //    Console.WriteLine($"{document.Source[word.Start..word.End]} : {word.Part}");
+                //}
+
+                //Parser.Process(document);
+
+                //var json = JsonConvert.SerializeObject(Parser.Record, Formatting.Indented);
+                //Debug.WriteLine(json);
+
+                Parser.Process(document);
             }
 
             // end program
@@ -54,7 +67,7 @@ namespace Interpreter
                     string path = Console.ReadLine();
 
                     // test path
-                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\linkedg.scl";
+                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\welcome.scl";
                     filename = path;
 
                     // read text

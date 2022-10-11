@@ -12,7 +12,7 @@ namespace Interpreter
             Document = document;
 
             // comments
-            Register(@"\/\/.*\n", 0, Part.Comment); // just like this!
+            Register(@"(\/\/.*)\n", 1, Part.Comment); // just like this!
 
             // literals
             Register("\".*?\"|\\<.*\\>", 0, Part.Literal); // quotes and c++ imports
@@ -45,11 +45,11 @@ namespace Interpreter
             Register(@"using (\w+)", 1, Part.Identifier);
 
             // methods
-            Register(@"function +(\w+)", 1, Part.Method); // 
-            Register(@"endfun +(\w+)", 1, Part.Method); // 
-            Register(@"call (\w+)\b", 1, Part.Method); // 
-            Register(@"call +\w+\.(\w+)", 1, Part.Method); // 
-            Register(@"(\w+)\(.*\)", 1, Part.Method); // 
+            Register(@"function +(\w+)", 1, Part.Method);
+            Register(@"endfun +(\w+)", 1, Part.Method);
+            Register(@"call (\w+)\b", 1, Part.Method);
+            Register(@"call +\w+\.(\w+)", 1, Part.Method);
+            Register(@"(\w+)\(.*\)", 1, Part.Method);
 
             // operators
             Register(Constant.GetOrPattern(Constant.Operators), 0, Part.Operator);
@@ -58,7 +58,7 @@ namespace Interpreter
             Register(Constant.GetOrPattern(Constant.BinaryOperators, isolated: true), 0, Part.BinaryOperator);
 
             // inert
-            Register(@"\.|\(|\)|,|\[|\]", 0, Part.Inert); // all structural elements
+            Register(@"\.|\(|\)|,|\[|\]|\n|\t", 0, Part.Structural); // all structural elements
 
             // identifiers: the rest
             Register(@"\w+", 0, Part.Identifier); // any other word
@@ -112,7 +112,7 @@ namespace Interpreter
                 Part.Conditional => ConsoleColor.Magenta,
                 Part.Keyword => ConsoleColor.Cyan,
                 Part.Comment => ConsoleColor.DarkGray,
-                Part.Inert => ConsoleColor.White,
+                Part.Structural => ConsoleColor.White,
                 _ => ConsoleColor.White,
             };
         }
@@ -122,7 +122,7 @@ namespace Interpreter
     {
         public int Start { get; set; }
         public int End { get; set; }
-        public Part Part { get; set; } = Part.Inert;
+        public Part Part { get; set; }
     }
 
     public enum Part
@@ -138,6 +138,6 @@ namespace Interpreter
         Conditional,
         Keyword,
         Comment,
-        Inert
+        Structural
     }
 }
