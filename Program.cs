@@ -3,34 +3,38 @@ using System.Diagnostics;
 
 namespace Interpreter
 {
-    public class Program
+    public static class Program
     {
+        // program document
+        public static Document Document { get; set; }
+
         public static void Main(string[] args)
         {
             // create timer
             Stopwatch stopwatch = new();
 
             // start message
-            Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung, 2022. \nVisit https://github.com/khemrind/SCLInterpreter for source.\n");
+            Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung, 2022. \n"
+                + "Visit https://github.com/khemrind/SCLInterpreter for source.\n");
 
             // read file
             if (TryGetSource(out string text, out string filename, args) == false)
-                Console.WriteLine("Program encountered an error."); 
+                Console.WriteLine("Program encountered an error.");
 
             else
             {
                 // initialize document with text
-                var document = new Document(source: text);
-                document.Name = Path.GetFileNameWithoutExtension(filename);
+                Document = new(source: text);
+                Document.Name = Path.GetFileNameWithoutExtension(filename);
 
                 // start process and record time
                 stopwatch.Start(); 
-                Scanner.Process(document);
+                Scanner.Process();
                 stopwatch.Stop();
 
                 // print highlighted text and word content
-                document.PrintToConsole();
-                document.PrintWords();
+                Document.PrintToConsole();
+                Document.PrintWords();
 
                 //foreach (var word in document.Words)
                 //{
@@ -42,7 +46,9 @@ namespace Interpreter
                 //var json = JsonConvert.SerializeObject(Parser.Record, Formatting.Indented);
                 //Debug.WriteLine(json);
 
-                Parser.Process(document);
+                stopwatch.Start();
+                Parser.Process();
+                stopwatch.Stop();
             }
 
             // end program
@@ -67,7 +73,7 @@ namespace Interpreter
                     string path = Console.ReadLine();
 
                     // test path
-                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\welcome.scl";
+                    if (path == "") path = "C:\\projects\\Interpreter\\assets\\test.scl";
                     filename = path;
 
                     // read text

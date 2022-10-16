@@ -1,0 +1,47 @@
+﻿description
+    Program : test.scl
+    Author : Khemrind Ung, October 20, 2022.
+    Description : Program designed to test the scanning, 
+    parsing, interpretation, and execution of a subset of the SCL language.
+*/
+
+global declarations
+
+constants
+    define default_message = "hello " of type string
+    define default_size = 5 of type integer
+
+implementations
+
+function displayMessage is
+parameters
+    word of type string
+variables
+    define message of type string
+begin
+    set message = default_message + word
+    display word, "!"
+endfun displayMessage
+
+function main return type integer is
+variables
+    // variable declarations
+    define result of type double 
+    define size of type integer
+begin
+    // display a starting message
+    display "test.scl main function begins.."
+    // do some math
+    set result = 4 / 5
+    display "value of 4 / 5", result
+    // display some message
+    display "showing test message.."
+    set size = default_size
+    while size > 0 do
+        // repeated call
+        call displayMessage using "world"
+        set size = size - 1
+    endwhile
+    // execution terminates OK
+    return 0 
+endfun main

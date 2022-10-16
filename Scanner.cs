@@ -5,12 +5,10 @@ namespace Interpreter
 {
     public static class Scanner
     {
-        public static Document Document { get; set; }
+        public static Document Document { get => Program.Document; }
 
-        public static void Process(Document document)
+        public static void Process()
         {
-            Document = document;
-
             // comments
             Register(@"(\/\/.*)\n", 1, Part.Comment); // just like this!
 
@@ -18,7 +16,7 @@ namespace Interpreter
             Register("\".*?\"|\\<.*\\>", 0, Part.Literal); // quotes and c++ imports
 
             // description
-            Register(@"description([\S\s]*?\*\/)", 1, Part.Comment); // description paragraph
+            Register(@"description\n([\S\s]*?\*\/)", 1, Part.Comment); // description paragraph
 
             // types
             Register(@"\btype ((unsigned )?\w+)", 1, Part.Type); // explicit type declaration
@@ -59,6 +57,7 @@ namespace Interpreter
 
             // inert
             Register(@"\.|\(|\)|,|\[|\]|\n|\t", 0, Part.Structural); // all structural elements
+            Register(@"((?:    )+)\w", 1, Part.Structural); // all structural elements
 
             // identifiers: the rest
             Register(@"\w+", 0, Part.Identifier); // any other word
@@ -123,6 +122,8 @@ namespace Interpreter
         public int Start { get; set; }
         public int End { get; set; }
         public Part Part { get; set; }
+
+        public string Value { get => Program.Document.Source[Start..End]; }
     }
 
     public enum Part
