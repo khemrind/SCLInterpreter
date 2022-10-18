@@ -5,13 +5,9 @@
     parsing, interpretation, and execution of a subset of the SCL language.
 */
 
-global declarations
-
 constants
     define default_message = "hello " of type string
     define default_size = 5 of type integer
-
-implementations
 
 function displayMessage is
 parameters

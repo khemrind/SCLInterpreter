@@ -43,12 +43,11 @@ namespace Interpreter
 
                 //Parser.Process(document);
 
-                //var json = JsonConvert.SerializeObject(Parser.Record, Formatting.Indented);
-                //Debug.WriteLine(json);
-
                 stopwatch.Start();
                 Parser.Process();
                 stopwatch.Stop();
+
+                Debug.WriteLine(Parser.Tree.Code);
             }
 
             // end program

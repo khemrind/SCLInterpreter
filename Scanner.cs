@@ -16,7 +16,7 @@ namespace Interpreter
             Register("\".*?\"|\\<.*\\>", 0, Part.Literal); // quotes and c++ imports
 
             // description
-            Register(@"description\n([\S\s]*?\*\/)", 1, Part.Comment); // description paragraph
+            Register(@"description\n([\S\s]*?\*\/)", 1, Part.Description); // description paragraph
 
             // types
             Register(@"\btype ((unsigned )?\w+)", 1, Part.Type); // explicit type declaration
@@ -57,7 +57,7 @@ namespace Interpreter
 
             // inert
             Register(@"\.|\(|\)|,|\[|\]|\n|\t", 0, Part.Structural); // all structural elements
-            Register(@"((?:    )+)\w", 1, Part.Structural); // all structural elements
+            Register(@"((?:    )+).", 1, Part.Structural); // all structural elements
 
             // identifiers: the rest
             Register(@"\w+", 0, Part.Identifier); // any other word
@@ -110,6 +110,7 @@ namespace Interpreter
                 Part.Operator => ConsoleColor.Gray,
                 Part.Conditional => ConsoleColor.Magenta,
                 Part.Keyword => ConsoleColor.Cyan,
+                Part.Description => ConsoleColor.DarkGray,
                 Part.Comment => ConsoleColor.DarkGray,
                 Part.Structural => ConsoleColor.White,
                 _ => ConsoleColor.White,
@@ -124,6 +125,7 @@ namespace Interpreter
         public Part Part { get; set; }
 
         public string Value { get => Program.Document.Source[Start..End]; }
+        public override string ToString() => Value;
     }
 
     public enum Part
@@ -139,6 +141,7 @@ namespace Interpreter
         Conditional,
         Keyword,
         Comment,
+        Description,
         Structural
     }
 }
