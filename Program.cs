@@ -36,18 +36,28 @@ namespace Interpreter
                 Document.PrintToConsole();
                 Document.PrintWords();
 
-                //foreach (var word in document.Words)
-                //{
-                //    Console.WriteLine($"{document.Source[word.Start..word.End]} : {word.Part}");
-                //}
-
-                //Parser.Process(document);
-
+                // parse document
+                Document.PrintHeader("parsing");
                 stopwatch.Start();
-                Parser.Process();
-                stopwatch.Stop();
+                try { Parser.Process(); }
+                catch (ParseException error) 
+                { 
+                    Console.WriteLine($"Program encountered an error: \n{error.Message}\n");
+                    var lines = Document.Source.Split("\n");
 
-                Debug.WriteLine(Parser.Tree.Code);
+                    // print the erroneous lines
+                    if (error.LineNumber >= 0) Console.WriteLine(lines[error.LineNumber - 1].Trim());
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(lines[error.LineNumber].Trim());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    if (error.LineNumber < lines.Length) Console.WriteLine(lines[error.LineNumber + 1].Trim());
+                }
+                stopwatch.Stop();
+                Console.WriteLine();
+
+                // print code
+                Document.PrintHeader("generated code");
+                Console.WriteLine(Parser.Code);
             }
 
             // end program

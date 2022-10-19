@@ -20,7 +20,7 @@ begin
 endfun
 
 function main return type integer is
-variables
+variables ERROR
     // variable declarations
     define result of type integer 
     define size of type integer

@@ -37,7 +37,7 @@ begin
         // repeated call
         call displayMessage using "world"
         set size = size - 1
-    endwhile
+    ERROR
     // execution terminates OK
     return 0 
 endfun

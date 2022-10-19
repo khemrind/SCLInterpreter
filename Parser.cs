@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Interpreter
@@ -7,7 +8,8 @@ namespace Interpreter
     {
         public static Document Document { get => Program.Document; }
 
-        public static Node Tree { get; set; } = new();
+        // generated code
+        public static string Code { get; set; } = "";
 
         // processing index
         private static int Index { get; set; } = 0;
@@ -24,27 +26,21 @@ namespace Interpreter
 
         private const string Tab = "    ";
 
-        private static Node Skip()
+        private static void Assert(bool condition, string process, string expectation)
         {
-            Console.WriteLine("skipping..\n");
-            Index++;
-            return new();
-        }
+            Console.WriteLine(Scope.GetIndent(ScopeLevel - 1) + $"Parsing <{process}> expecting: {expectation}");
 
-        private static void SkipNewlines()
-        {
-            while (Next.Value == "\n") Index++;
-        }
-
-        private static void Assert(bool condition, string error)
-        {
             if (condition) Index++;
-            else throw new Exception(error);
+            else
+            {
+                var line = GetLineNumber();
+                throw new ParseException($"At {process}: expected {expectation}. (line {line})") { LineNumber = line };
+            }
         }
 
-        private static int GetLineNumber(int position)
+        private static int GetLineNumber()
         {
-            return Document.Source.Take(position).Count(item => item == '\n') + 1;
+            return Document.Source.Take(Current.End).Count(item => item == '\n') + 1;
         }
 
         private static void RemoveComments()
@@ -79,15 +75,15 @@ namespace Interpreter
         {
             public Scope() => ScopeLevel++;
             public void Dispose() => ScopeLevel--;
-            public static string Indent { get => CreateIndent(ScopeLevel); }
+            public static string Indent { get => GetIndent(ScopeLevel); }
 
-            private static string CreateIndent(int level)
+            public static string GetIndent(int level)
             {
-                string indent = "";
-                for (int index = level; index > 0; index--)
-                    indent += Tab;
+                if (level == 1) return "    ";
+                else if (level == 2) return "        ";
+                else if (level == 3) return "            ";
 
-                return indent;
+                return "";
             }
         }
 
@@ -101,12 +97,12 @@ namespace Interpreter
         #endregion
     }
 
-    // define node
-    public class Node : List<object>
+    public class ParseException : Exception
     {
-        public string Code { get; set; }
+        public ParseException() : base() { }
+        public ParseException(string message) : base(message) { }
+
+        public int LineNumber { get; set; }
     }
 
-    // define a node constructor function
-    delegate Node ConstructNode();
 }
