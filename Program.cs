@@ -58,6 +58,7 @@ namespace Interpreter
                 // print code
                 Document.PrintHeader("generated code");
                 Console.WriteLine(Parser.Code);
+                File.WriteAllText($"{Document.Name}.cs", Parser.Code);
             }
 
             // end program
