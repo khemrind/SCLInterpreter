@@ -12,6 +12,8 @@ namespace Interpreter
         {
             // create timer
             Stopwatch stopwatch = new();
+            long process_time = -1;
+            long execution_time = -1;
 
             // start message
             Console.WriteLine("SCL Interpreter (CS4308) Khemrind Ung, 2022. \n"
@@ -54,15 +56,25 @@ namespace Interpreter
                 }
                 stopwatch.Stop();
                 Console.WriteLine();
+                process_time = stopwatch.ElapsedMilliseconds;
 
                 // print code
                 Document.PrintHeader("generated code");
                 Console.WriteLine(Parser.Code);
                 File.WriteAllText($"{Document.Name}.cs", Parser.Code);
+                Console.WriteLine();
+
+                // compile and execute
+                Document.PrintHeader("execution");
+                stopwatch.Restart();
+                Executer.Process();
+                stopwatch.Stop();
+                execution_time = stopwatch.ElapsedMilliseconds;
             }
 
             // end program
-            Console.WriteLine($"\nProcess time: {stopwatch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"\nProcess time: {process_time}ms");
+            Console.WriteLine($"Execution time: {execution_time}ms");
             Document.WriteWith("Press any key to exit...\n", ConsoleColor.Red);
             Console.ReadKey();
         }
