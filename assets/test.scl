@@ -16,7 +16,7 @@ variables
     define message of type string
 begin
     set message = default_message + word
-    display word, "!"
+    display message, "!"
 endfun
 
 function main return type integer is

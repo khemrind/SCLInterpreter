@@ -30,7 +30,8 @@ namespace Interpreter
             references.Add(MetadataReference.CreateFromFile(typeof(Console).Assembly.Location)); // System.Console
 
             // compile
-            var compilation = CSharpCompilation.Create("test.dll", new SyntaxTree[] { tree }, references);
+            var compilation = CSharpCompilation.Create("test", new SyntaxTree[] { tree }, references);
+            compilation.Emit("test.dll");
 
             // load assembly
             var assembly = Assembly.LoadFile(AppContext.BaseDirectory + "/test.dll");
